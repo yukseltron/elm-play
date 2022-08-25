@@ -1,15 +1,9 @@
 module Main exposing (..)
-
--- Press buttons to increment and decrement a counter.
---
--- Read how it works:
---   https://guide.elm-lang.org/architecture/buttons.html
---
-
-
 import Browser
-import Html exposing (Html, button, div, text)
+import Html exposing (Html, Attribute, button, div, input, text)
+import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
+import Html.Events exposing (onInput)
 
 
 
@@ -24,12 +18,15 @@ main =
 -- MODEL
 
 
-type alias Model = Int
-
+type alias Model =
+    {
+      content : String,
+      data: Int
+    }
 
 init : Model
 init =
-  0
+    { content = "", data = 0 }
 
 
 
@@ -41,22 +38,26 @@ type Msg
   | Decrement
   | Reset
   | IncrementTen
+  | Change String
 
 
 update : Msg -> Model -> Model
 update msg model =
   case msg of
     Increment ->
-      model + 1
+      { model | data = model.data + 1 }
 
     Decrement ->
-      model - 1
+      { model | data = model.data - 1 }
 
     Reset ->
-      0
+      { model | data = 0 }
 
     IncrementTen ->
-      model + 10
+      { model | data = model.data + 10 }
+
+    Change newContent ->
+      { model | content = newContent }
 
 
 
@@ -67,8 +68,10 @@ view : Model -> Html Msg
 view model =
   div []
     [ button [ onClick Decrement ] [ text "-" ]
-    , div [] [ text (String.fromInt model) ]
+    , div [] [ text (String.fromInt model.data) ]
     , button [ onClick Increment ] [ text "+" ]
     , button [ onClick IncrementTen ] [ text "+10" ]
     , button [ onClick Reset ] [ text "Reset" ]
+    , input [ placeholder "Text to reverse", value model.content, onInput Change ] []
+    , div [] [ text (String.reverse model.content) ]
     ]
